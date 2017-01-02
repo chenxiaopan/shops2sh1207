@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<!-- 使用常量调整struts的属性，这里将框架设置为运行在开发模式 -->
+	<constant name="struts.devMode" value="true" />
+	<!-- 解决中文乱码 -->
+	<constant name="struts.i18n.encoding" value="utf-8" />
+	<!-- 设置使用自定义主题 -->
+	<constant name="struts.ui.theme" value="simple" />
+
+	<!--公共操作的包，即不需要进行用户认证的包 -->
+	<package name="shop" namespace="/" extends="json-default">
+
+		<interceptors>
+			<interceptor name="authenticationInterceptor"
+				class="net.cxp.utils.AuthenticationInterceptor" />
+		</interceptors>
+
+		<!-- 全局页面 -->
+		<global-results>
+			<result name="login">/ulogin.jsp</result>
+			<result name="error">/error.jsp</result>
+			<result name="stream" type="stream">
+				<param name="inputName">inputStream</param>
+			</result>
+		</global-results>
+		<!-- 异常映射 -->
+		<global-exception-mappings>
+			<exception-mapping exception="java.lang.Exception"
+				result="error" />
+		</global-exception-mappings>
+
+	</package>
+
+
+	<!-- 用户登录才能访问的action -->
+
+	<!-- jason-default继承了struts-default -->
+	<package name="admin" namespace="/" extends="json-default">
+
+		<!--这里自定义了一个用户认证拦截器，将其与默认拦截器栈组合形成一个安全拦截器栈作为这个包的默认拦截器 -->
+		<interceptors>
+			<interceptor name="authenticationInterceptor"
+				class="net.cxp.utils.AuthenticationInterceptor" />
+			<interceptor-stack name="secureStack">
+				<interceptor-ref name="authenticationInterceptor" />
+				<interceptor-ref name="defaultStack" />
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="secureStack" />
+
+		<!-- 全局result，对这个package中的所有action有效 -->
+		<global-results>
+			<result name="aindex">/WEB-INF/admin/aindex.jsp</result>
+			<result name="error">/error.jsp</result>
+			<result name="login">/ulogin.jsp</result>
+		</global-results>
+
+		<!-- 发生异常映射的页面 -->
+		<global-exception-mappings>
+			<exception-mapping exception="java.lang.Exception"
+				result="error" />
+		</global-exception-mappings>
+
+		<!-- 用来完成系统 请求转发的action,所有的请求都交给execute -->
+		<action name="send_*_*" class="sendAction">
+			<result name="send">/WEB-INF/{1}/{2}.jsp</result>
+		</action>
+	</package>
+
+	<include file="category.xml" />
+	<include file="forder.xml" />
+	<include file="sorder.xml" />
+	<include file="product.xml" />
+	<include file="user.xml" />
+	<include file="pay.xml" />
+
+</struts>    

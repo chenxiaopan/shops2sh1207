@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+
+	<package name="category" namespace="/" extends="admin">
+	<action name="category_*" class="categoryAction" method="{1}">
+			<!-- 必须要先添加json包，然后上面继承json-default -->
+			<result name="jsonMap" type="json">
+				<!-- 要转换成json对象的数据 -->
+				<param name="root">pageMap</param>
+				<param name="excludeProperties">
+					<!--排除不需要转换为json数据传到前台的属性，不写的话会抛异常 rows[0].account.pass，\[为转义特殊字符 -->
+					rows\[\d+\]\.account\.pass,
+					rows\[\d+\]\.account\.name,
+					rows\[\d+\]\.account\.categories,
+					rows\[\d+\]\.products
+				</param>
+			</result>
+			<result name="jsonList" type="json">
+				<param name="root">jsonList</param>
+				<param name="excludeProperties">
+					<!-- [0].pass, [1].pass，不用写rows的原因是不像map一样用键值对存储 ，所以没有根对象 -->
+					\[\d+\]\.account,\[\d+\]\.products
+				</param>
+			</result>
+		</action>
+	</package>
+</struts>    

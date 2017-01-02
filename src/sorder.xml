@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<package name="sorder" namespace="/" extends="admin">
+		<!-- spring管理action（泛型）时不能在actin里加拦截器，否则会报类没有找到的异常 -->
+		<action name="sorder_*" class="sorderAction" method="{1}">
+			<result name="showCart">/user/showCart.jsp</result>
+			<result name="del" type="redirect">/user/showCart.jsp</result>
+			<result name="jsonList" type="json">
+				<param name="root">jsonList</param>
+				<param name="excludeProperties">
+					<!-- [0].pass, [1].pass，不用写rows的原因是不像map一样用键值对存储 ，所以没有根对象 -->
+					\[\d+\]\.id,
+					\[\d+\]\.forder,
+					\[\d+\]\.product,
+					\[\d+\]\.price
+				</param>
+			</result>
+		</action>
+	</package>
+</struts>    
+
+
+	

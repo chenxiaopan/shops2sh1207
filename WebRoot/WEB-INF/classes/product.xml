@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<package name="product" namespace="/" extends="shop">
+		<action name="product_*" class="productAction" method="{1}">
+			<result name="detail">/detail.jsp </result>
+			<!-- 必须要先添加json包，然后上面继承json-default -->
+			<result name="jsonMap" type="json">
+				<!-- 要转换成json对象的数据 -->
+				<param name="root">pageMap</param>
+				<param name="excludeProperties">
+					<!--排除不需要转换为json数据传到前台的属性，不写的话会抛异常 rows[0].account.pass -->
+					rows\[\d+\]\.sorders,
+					rows\[\d+\]\.category\.account,
+					rows\[\d+\]\.category\.products,
+					rows\[\d+\]\.pic,
+				</param>
+			</result>
+			<interceptor-ref name="authenticationInterceptor">
+				<!-- 有多个方法需要（不）被拦截器拦截，则多个方法名之间用逗号分隔即可。 -->
+				<param name="excludeMethods">get</param>
+			</interceptor-ref>
+			<interceptor-ref name="defaultStack"/>
+		</action>
+	</package>
+
+</struts>    

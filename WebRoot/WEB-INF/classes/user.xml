@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<package name="user" namespace="/" extends="shop">
+	
+		<action name="registerFrom">
+			<result>/register.jsp</result>
+		</action>
+
+		<action name="loginForm">
+			<result>/ulogin.jsp</result>
+		</action>
+		
+		<action name="user_*" class="userAction" method="{1}">
+			<result type="redirect">/index.jsp</result>
+			<result name="goURL" type="redirect">${#session.goURL}</result>
+			<result name="input">/ulogin.jsp</result>
+		</action>
+	</package>
+</struts>   

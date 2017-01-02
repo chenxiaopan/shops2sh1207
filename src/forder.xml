@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<package name="forder" namespace="/" extends="admin">
+		<action name="forder_*" class="forderAction" method="{1}">
+			<result name="bank">/user/bank.jsp</result>
+			<result name="emptyForder" type="redirect">/user/showCart.jsp</result>
+			<!-- 必须要先添加json包，然后上面继承json-default -->
+			<result name="jsonMap" type="json">
+				<!-- 要转换成json对象的数据 -->
+				<param name="root">pageMap</param>
+			</result>
+		</action>
+	</package>
+</struts>    

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:tx="http://www.springframework.org/schema/tx" xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+http://www.springframework.org/schema/beans 
+http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+http://www.springframework.org/schema/context 
+http://www.springframework.org/schema/context/spring-context-2.5.xsd
+http://www.springframework.org/schema/util 
+http://www.springframework.org/schema/util/spring-util-2.0.xsd
+http://www.springframework.org/schema/tx 
+http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+">
+
+
+	<!-- 打开注解装配并自动检测Bean和定义Bean -->
+	<context:component-scan base-package="net.cxp"></context:component-scan>
+
+	<!-- 所有的properties文件应该交给Spring管理，而且在启动的时候加载 Spring支持两种方式，property-placeholder仅仅在xml中使用，即在beans.xml中获取properties文件中的对应的value -->
+	<!-- <context:property-placeholder location="classpath:conn.properties"/> -->
+
+	<!-- 第二种方式是使用注解的方式注入，主要用在java代码中使用注解注入properties文件中相应的value值 -->
+	<bean id="prop"
+		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="locations">
+			<list>
+				<value>classpath:upload.properties</value>
+			</list>
+		</property>
+	</bean>
+
+
+	<!-- 定义数据源 -->
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:orcl" />
+		<property name="username" value="cxp" />
+		<property name="password" value="123" />
+	</bean>
+
+
+	<!-- 定义session工厂 -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mappingResources">
+			<list>
+				<value>net/cxp/entity/Account.hbm.xml</value>
+				<value>net/cxp/entity/Category.hbm.xml</value>
+				<value>net/cxp/entity/Forder.hbm.xml</value>
+				<value>net/cxp/entity/Product.hbm.xml</value>
+				<value>net/cxp/entity/Sorder.hbm.xml</value>
+				<value>net/cxp/entity/Status.hbm.xml</value>
+				<value>net/cxp/entity/Users.hbm.xml</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="dialect">org.hibernate.dialect.Oracle9Dialect</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<!-- <prop key="hibernate.format_sql">true</prop> -->
+				<!-- 配置二级缓存 -->
+				<prop key="hibernate.cache.use_second_level_cache">true</prop>
+				<!-- 由于查询的缓存命中率很低，所以关掉查询时的二级缓存 -->
+				<prop key="hibernate.cache.use_query_cache">true</prop>
+				<!--设置缓存的类型，设置缓存的提供商 -->
+				<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory
+				</prop>
+				<prop key="hibernate.cache.provider_configuration_file_resource_path">WEB-INF/classes/ehcache.xml</prop>   <!--设置缓存的配置文件路径 -->
+				<!--使用 getCurrentSession()必须配置此属性注意不是thread而是org.springframework.orm.hibernate4.SpringSessionContext -->
+				<prop key="hibernate.current_session_context_class">org.springframework.orm.hibernate4.SpringSessionContext
+				</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- 配置事务管理器 -->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean>
+	<!-- 事务注解驱动 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+</beans>
